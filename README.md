@@ -4,7 +4,10 @@ gaikpy solves the inverse kinematics for every URDF based robot model using a ge
 
 If you use the library in an academic context, you can cite it by citing the paper below. We analysed the ik in a hybrid manipulation context for the NICO robot ( the measured calculation times in the paper are already outdated, gaikpy is much faster now ).
 
-
+Neuro-Genetic Visuomotor Architecture for Robotic Grasping   
+Matthias Kerzel, Josua Spisak, Erik Strahl, Stefan Wermter
+Artificial Neural Networks and Machine Learning – ICANN 2020, pages 533-545 - 2020.
+https://www2.informatik.uni-hamburg.de/wtm/publications/2020/KSSW20/ICANN_2020__Neuro_Genetic_Visuomotor_Framework_Preprint.pdf
 
 # History
 
