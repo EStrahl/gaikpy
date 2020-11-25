@@ -10,6 +10,11 @@ import pyrender
 import trimesh
 import numpy as np
 
+import logging
+import sys
+logger = logging.getLogger("gaikpy_logger")
+module=sys.modules[__name__]
+logger.info("Logging started on  " + str(module))
 
 class robot(object):
 
@@ -49,7 +54,7 @@ class robot(object):
         self.r_node_map= {}
         self.visualisation=visualisation
         if visualisation:
-            print ("scene created")
+            logger.debug ("robot visualisation scene created")
             self.create_scene(off_screen=off_screen,ego_view=ego_view)
         else:
             self.scene=None
@@ -121,7 +126,7 @@ class robot(object):
                 self.scene.add(light, pose=  np.eye(4))
 
             self.rend = pyrender.OffscreenRenderer(1920, 1080)
-            #print ("init rend: " + str(self.rend))
+            logger.debug ("renderer initialised: " + str(self.rend))
         else:
             self.viewer=pyrender.Viewer(self.scene, use_raymond_lighting=True, run_in_thread=True)
 
@@ -137,7 +142,6 @@ class robot(object):
             #if not in off_screen mode, just ignore it
             if self.off_screen:
                 from PIL import Image
-                #print ("rend: " + str(self.rend))
                 color, _ = self.rend.render(self.scene)
                 im = Image.fromarray(color)
                 im.save(filename)
@@ -179,6 +183,7 @@ class robot(object):
             if not self.off_screen:
                 self.viewer.render_lock.acquire()
             self.scene.set_pose(self.target_node, pose=sfwr)
+            logger.debug ("target pose to : " +str(self.target_node))
             if not self.off_screen:
                 self.viewer.render_lock.release()
     
@@ -192,14 +197,15 @@ class robot(object):
         """
         if self.visualisation:
             self.cfg=self.get_cfg_from_joint_values(joint_values)
-            print ("ccccc - cfg: " +str(self.cfg))
+            logger.debug ("set new pose configuration cfg: " +str(self.cfg))
             
             fk=self.get_robot_trimesh()
 
             if not self.off_screen:
                 self.viewer.render_lock.acquire()
             
-            #set robot pose        
+            #set robot pose 
+            logger.debug("set robot pose to " + str(fk))       
             for mesh in fk:
                 pose = fk[mesh]
                 self.r_node_map[mesh].matrix = pose
@@ -242,7 +248,7 @@ if __name__ == "__main__":
 
     #get forward kinematics of the robot and print first link
     fk = nico.r_model.link_fk()
-    print(fk[nico.r_model.links[1]])
+    print("Robot forward kinematics: " + str(fk[nico.r_model.links[1]]))
 
     with open('./resources/data/nico/nico_right_20_new.p', 'rb') as f:
             sample_set = pickle.load(f)
@@ -253,7 +259,7 @@ if __name__ == "__main__":
         (joi,sfwr)=sample
         
         
-        print ("Original : \n" + str(joi))
+        print ("Original target pose: \n" + str(joi))
         #display_robot_pose(nb,joi)
         
         nico.update_target(sfwr)

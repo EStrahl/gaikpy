@@ -16,6 +16,12 @@ import numpy as np
 import random
 import math
 
+import logging
+import sys
+logger = logging.getLogger("gaikpy_logger")
+module=sys.modules[__name__]
+logger.info("Logging started on  " + str(module))
+
 class ga_world(object):
     """ General Genetic Algorithm Object (World)
 
@@ -86,7 +92,7 @@ class ga_world(object):
                 raise NameError('None not allowed in __init__!')
             self._gene = gene
             self.eval_func=eval_func            
-            #print (" gen init: " + str(self._gene))
+            logger.debug (" gen init: " + str(self._gene))
             self.fitness = eval_func(self._gene)
             
 
@@ -109,7 +115,7 @@ class ga_world(object):
         def refresh_fitness(self):
             
             #Calculate the firness with eval function
-            #print (" gen: " + str(self._gene))
+            logger.debug (" refresh fitness: " + str(self._gene))
             self.fitness=self.eval_func(self._gene)
 
         def __repr__(self):
@@ -210,7 +216,7 @@ class ga_world(object):
                     off[i] = off[i] + (random.random() * 2 - 1)
 
         indi.set_chromo(off)
-        # print "Mutant: gene: " + str(off)
+        logger.debug ( "Mutation : gene: " + str(off))
         # raw_input()
         return (off)
 
@@ -226,10 +232,10 @@ class ga_world(object):
             bounds of the gene, by default None
         """
 
-        #print("----- Init -----")
-        #print("--- len bounds: " + str(len(bounds)))
-        #print("--- bounds: " + str(bounds))
-        #print("--- chrome_length: " + str(chrome_length))
+        logger.debug ("init gene")
+        logger.debug("len bounds: " + str(len(bounds)))
+        logger.debug("bounds: " + str(bounds))
+        logger.debug("chrome_length: " + str(chrome_length))
         import math
         chrome = np.zeros(chrome_length)
         for t in range(chrome_length):
@@ -267,8 +273,6 @@ class ga_world(object):
 
         pop.individuals = sorted(
             pop.individuals, key=lambda individual: individual.fitness)
-        # for individual in pop.individuals:
-        #    print individual
 
         i = 0
         nic = 0  # No improvement counter
@@ -287,22 +291,21 @@ class ga_world(object):
             #			nic=0
 
             i += 1
-            # print("(Gen: #%s) Total error: %s\n" % (i, np.sum([ind.fitness for ind in pop.individuals])))
-            # print "Min Error: " + str(pop.individuals[0].fitness)
+            logger.debug("(Gen: #%s) Total error: %s\n" % (i, np.sum([ind.fitness for ind in pop.individuals])))
+            logger.debug("Min Error: " + str(pop.individuals[0].fitness))
             new_pop = self.Population()
             # winners = np.zeros((params[4], params[3])) #20x2
             # clear population from individuals with the same fitness
             t = 1
 
             # Get all individiduals out, that are nearly equal
-            
-            ##while (t < len(pop.individuals)):
+            while (t < len(pop.individuals)):
 
-            ##    if np.allclose(pop.individuals[t-1].fitness, pop.individuals[t].fitness, rtol=1e-03, atol=1e-04):
-            ##        pop.individuals[t].gene = init_gene(bound_arr)
-                    # print "cleared"
-                    # raw_input()
-            ##    t += 1
+                if np.allclose(pop.individuals[t-1].fitness, pop.individuals[t].fitness, rtol=1e-03, atol=1e-04):
+                    pop.individuals[t].gene = self.init_gene(self.chrom_length,bounds=self.bounds)
+                    logger.debug ("cleared an individual cause too equal")
+                    
+                t += 1
 
 
             # get the best one and take it over
@@ -319,12 +322,11 @@ class ga_world(object):
 
                 if len(new_pop.individuals) > 0:
                     if not np.array_equal(parent.get_chromo(), new_pop.individuals[0].get_chromo()):
-                        # print "Elite: " + str(parent.gene)
+                        logger.debug ( "Elite: " + str(parent.get_chromo()))
                         new_pop.individuals.append(parent)
                     else:
-                        # print "First Elite: " + str(parent.gene)
+                        logger.debug ("First Elite: " + str(parent.get_chromo()))
                         new_pop.individuals.append(parent)
-
 
             # Crossover the population, select by tournament selection
             while len(new_pop.individuals) < self.pop_size and len(pop.individuals) > 2:
@@ -400,14 +402,10 @@ class ga_world(object):
             # for indi in pop.individuals:
             '''
 
-            ## *** Changes for multithreading
-            #from multiprocessing.dummy import Pool as Threadpool
-            #pool = Threadpool(4)
-            ##
 
             #For not multithreading
             for indi in pop.individuals:
-                #print ("genes in pop: " + str(indi))
+                logger.debug ("genes in population: " + str(indi))
                 indi.refresh_fitness()
             
             ## Changes for multithreading
@@ -421,11 +419,7 @@ class ga_world(object):
 
             #Check with best gene, if accuracy is reached
             acc_reached=self.accuracy_reached(pop.individuals[0].get_chromo())
-
-            
-
-        #print ("ow: " + str(orientation_weight))
-        #input()
+        
 
         #full_joint_result=chain.active_to_full(pop.individuals[0].get_chromo(), starting_nodes_angles)
 

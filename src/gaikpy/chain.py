@@ -1,11 +1,12 @@
-# coding= utf8
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 """
-.. module:: chain
-.. Uses a chain class from ikpy library and extends it to be capable to use the ga algorithm
+   chain
+   Uses a chain class from ikpy library and extends it to be capable to use the ga algorithm
 """
 
 from ikpy import chain
-
 from gaikpy import inverse_kinematics as ik
 import numpy as np
 from ikpy import link as link_lib
@@ -13,6 +14,21 @@ import time
 
 #set maximal number of CPUs for multiprocessing
 max_cpu=128
+
+# Initialise and start the logging
+import logging
+import sys
+log_formatter = logging.Formatter("%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s")
+root_logger = logging.getLogger("gaikpy_logger")
+file_handler = logging.FileHandler('gaikpy.log')
+file_handler.setFormatter(log_formatter)
+root_logger.addHandler(file_handler)
+console_handler = logging.StreamHandler()
+console_handler.setFormatter(log_formatter)
+root_logger.addHandler(console_handler)
+root_logger.setLevel(logging.INFO)
+logger=root_logger
+
 
 class Chain(chain.Chain):
     """The base Chain class, based on ikpy ( https://github.com/Phylliade/ikpy ) chain
@@ -44,7 +60,7 @@ class Chain(chain.Chain):
 
 
     def __init__(self, joints, active_links_mask=None, name="chain", **kwargs):
-        #print ("-------- Init -------------")
+        logger.info("--Init chain -- " + name  )
         
         super().__init__(joints, active_links_mask, name, **kwargs)
         self.cache_count=0
@@ -90,13 +106,13 @@ class Chain(chain.Chain):
                 cache_index=(link.name,str(round(joint_angle, 9)))
                 try:
                     local_cache=self.local_transformation_cache[cache_index]
-                    #print ("Yes, cache use: " +str(cache_index))
+                    logger.debug ("Cache use: " +str(cache_index))
                     self.cache_count+=1
                 except:
                     #local_cache=np.asarray(link.get_transformation_matrix(joint_angle))
                     local_cache=np.asarray(link.get_link_frame_matrix(parameters))
                     self.local_transformation_cache[cache_index]=local_cache
-                    #print (" local cache: " + str(len(self.local_transformation_cache)))
+                    logger.debug (" local cache: " + str(len(self.local_transformation_cache)))
             else:
                 #local_cache=np.asarray(link.get_transformation_matrix(joint_angle))
                 local_cache=np.asarray(link.get_link_frame_matrix(parameters))
@@ -109,7 +125,7 @@ class Chain(chain.Chain):
                 frame_matrixes.append(frame_matrix)
 
         # Return the matrix, or matrixes
-        #print ("Cache used: " +str(self.cache_count))
+        logger.debug ("Cache used: " +str(self.cache_count))
         if full_kinematics:
             return frame_matrixes
         else:
@@ -148,8 +164,7 @@ class Chain(chain.Chain):
             The list of the positions of each joint according to the target. Note : Inactive joints are in the list.
         """
         
-        # print "Initial position: " + str(initial_position)
-        # raw_input()
+        logger.debug( "Initial position: " + str(initial_position))
 
         # Checks on input
         if method!="multi":
@@ -226,35 +241,20 @@ class Chain(chain.Chain):
                 
                 success=False
                 while not success:
-                    #print ("Nothing found.")
+                    logger.debug (" Nothing found so far.")
                     time.sleep(.1)
                     
                     if found_something.is_set():
-                        print ("Found something. Lets kill the jobs.")
+                        logger.debug ("Found something. Lets kill the jobs.")
                         time.sleep(.1)
                         for proc in jobs:
                             proc.terminate()
                         success=True
 
-                #print (return_dict)
-                #input()
-                #Get the best one from all calculations
-                #print ("\n Return ")
-                #print (return_dict)
-                #sorted_dict={k: v for k, v in sorted(return_dict.items(), key=lambda item: item[1])}
-                #print ("\n Sorted ")
-                #print (sorted_dict)
-                
-                #val,ret = sorted_dict[0]
                 
                 #Get the best one from all calculations
-                #print ("dict" + str(return_dict))
-                #input()
-                print ("returns: ", str(return_dict))
+                logger.debug ("Dictionary of all (multithreded) calculations " + str(return_dict))
                 val,joints=return_dict[min(return_dict, key=return_dict.get)]
-                #ret=return_dict[min(return_dict, key=return_dict.get)]
-                #print (ret)
-                #input()
                 
             else: 
                 dummy,joints=ik.inverse_kinematic_ga(self, target, 
@@ -262,6 +262,7 @@ class Chain(chain.Chain):
                                            second_chain=second_chain, second_target_frame=second_target_frame,
                                            method=method, orientation_weight=orientation_weight, **kwargs)
             #joints = self.active_to_full(joints)
+            logger.debug("Best joint set : " + str(joints))
             return (joints)
     
     def active_to_full(self, active_joints):
@@ -285,11 +286,11 @@ class Chain(chain.Chain):
         if (self.number_of_active_joints())!=len(active_joints):
             raise ValueError("Wrong input in active_to_full! given join no  = " + str(len(active_joints)) 
                                 + "  - number of all active links " + str(self.number_of_active_joints()))
-        #print ("---- initial: " + str(self.initial_position))
+        logger.debug ("initial joint position: " + str(self.initial_position))
         full_joints = np.array(self.initial_position, copy=True, dtype=np.float)
-        #print ("---- full_joints 1: " + str(full_joints))
+        logger.debug ("full joints 1: " + str(full_joints))
         np.place(full_joints, self.active_links_mask, active_joints)
-        #print ("---- full_joints 2: "  + str(full_joints))
+        logger.debug ("full_joints 2: "  + str(full_joints))
         return full_joints
     
     def active_from_full(self, joints):
@@ -390,8 +391,6 @@ class Chain(chain.Chain):
         symbolic : bool, optional
             should caclculation be done symbolic with sympy, by default True
         """
-        #print("URDF: " + urdf_file)
-        #input()
         chain_from_urdf = super().from_urdf_file(urdf_file, base_elements, active_links_mask=active_joints_mask, 
                                     name=name, symbolic=symbolic)
         return(chain_from_urdf)

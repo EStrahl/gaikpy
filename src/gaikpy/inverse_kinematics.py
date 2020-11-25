@@ -17,6 +17,16 @@ Vancouver, BC, 2017, pp. 6959-6966, doi: 10.1109/IROS.2017.8206620.
 
 """
 
+#logging
+import logging
+import sys
+logger = logging.getLogger("gaikpy_logger")
+module=sys.modules[__name__]
+logger.info("Logging started on  " + str(module))
+
+
+module=sys.modules[__name__]
+logger.info("Logging started on  " + str(module))
 
 import scipy.optimize
 import numpy as np
@@ -86,7 +96,6 @@ def inverse_kinematic_optimization(chain, target_frame, starting_nodes_angles, r
         y = chain.active_to_full(x)    
         squared_distance = np.linalg.norm(
             chain.forward_kinematics(y)[:3, -1] - target_position)
-        # print  target_ distance: " + str(squared_distance)
         return squared_distance
 
     def optimize_two_chains(x):
@@ -161,10 +170,7 @@ def inverse_kinematic_optimization(chain, target_frame, starting_nodes_angles, r
 
     if starting_nodes_angles is None:
         starting_nodes_angles = [0] * chain.number_of_active_joints()
-    #print ("!!!!!!!!!!!!!!!!!! " + str(starting_nodes_angles))
-    #print ("links " + str( chain.number_of_all_links() ) + " active links " + str( chain.number_of_active_links()))
-        #raise ValueError("starting_nodes_angles must be specified")
-
+    
     # If a regularization is selected
     if regularization_parameter is not None:
         chosen_optimizer=optimize_with_regularization
@@ -191,7 +197,7 @@ def inverse_kinematic_optimization(chain, target_frame, starting_nodes_angles, r
     # Compute bounds
     real_bounds = [link.bounds for link in chain.joints]
     real_bounds = chain.active_from_full(real_bounds)
-    #print ("real bounds " + str(len(real_bounds)))
+    logger.debug ("real bounds " + str(len(real_bounds)))
     
     # Manage iterations maximum
     options = {}
@@ -210,7 +216,7 @@ def inverse_kinematic_optimization(chain, target_frame, starting_nodes_angles, r
         max_iter=5000
         res = scipy.optimize.differential_evolution(chosen_optimizer, bounds=real_bounds, atol=atol,tol=tol,maxiter=max_iter)
     else:
-        #print ("bounds: " +str(real_bounds) + " starting: " + str(starting_nodes_angles))
+        logger.debug ("bounds: " +str(real_bounds) + " starting: " + str(starting_nodes_angles))
         res = scipy.optimize.minimize(chosen_optimizer, starting_nodes_angles, method='L-BFGS-B',
                                       bounds=real_bounds, options=options )
 
@@ -263,7 +269,7 @@ def inverse_kinematic_optimization_multi(chain, j_targets, starting_nodes_angles
             joint_number, target = j_target
             squared_distances.append(np.linalg.norm(
                 a_matrices[joint_number][:3, -1] - target))
-            # print str(squared_distances)
+            logger.debug ("squared distance: " + str(squared_distances))
 
         # Sum up all distances
         squared_distance_sum = 0
@@ -396,7 +402,6 @@ def inverse_kinematic_ga(chain, target_frame, starting_nodes_angles, multiproc_c
     # be in the limits of the joint bounds
     bound_arr = []
     for t in chain.joints:
-        # print t
         if t.bounds != (None, None):
             bound_arr.append(t.bounds)
 
@@ -457,7 +462,7 @@ def inverse_kinematic_ga(chain, target_frame, starting_nodes_angles, multiproc_c
             
             #min_or_distance = utils.angle_diff(fwk,target_frame)
             min_or_distance = utils.angle_diff_tait(fwk,target_frame)
-            print (" fwk:   " + str(fwk) + " or_dist" + str(min_or_distance) )
+            logger.debug (" fwk:   " + str(fwk) + " or_dist" + str(min_or_distance) )
 
         if dist_acc==None and or_acc==None:
             acc_reached=False
@@ -466,7 +471,7 @@ def inverse_kinematic_ga(chain, target_frame, starting_nodes_angles, multiproc_c
         elif or_acc==None:
             acc_reached = min_distance < dist_acc
         else:
-            print ("------------dist acc:" + str(min_distance))
+            logger.debug ("dist acc:" + str(min_distance))
             acc_reached = min_distance < dist_acc and min_or_distance < or_acc
         return (acc_reached)
 
@@ -478,10 +483,10 @@ def inverse_kinematic_ga(chain, target_frame, starting_nodes_angles, multiproc_c
         joint_values : array
             joint value set
         """
-        print (" local opt in: " + str(joint_values))
+        logger.debug (" local opt in: " + str(joint_values))
         optimised_joint_values = chain.inverse_kinematics(target_frame, initial_position=chain.active_to_full(joint_values), 
         method=ga_optimiser, include_orientation=include_orientation, max_iter=max_iter*100)
-        print (" local opt out: " + str(chain.active_from_full(optimised_joint_values)))
+        logger.debug (" local opt out: " + str(chain.active_from_full(optimised_joint_values)))
         return(chain.active_from_full(optimised_joint_values))
                         
 
@@ -521,7 +526,7 @@ def inverse_kinematic_ga(chain, target_frame, starting_nodes_angles, multiproc_c
     # Build bounds array from URDF data
     bound_arr = []
     for t in chain.joints:
-        #print (t.bounds)
+        
         if t.bounds != (None, None):
             bound_arr.append(t.bounds)
 

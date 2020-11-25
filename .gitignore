@@ -2,7 +2,7 @@
 resources/urdf/nicol/
 
 #keep the example movefile
-resources/data/nico/nico_right_20_new.p
+!resources/data/nico/nico_right_20_new.p
 
 build/*
 *.pyc
