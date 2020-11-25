@@ -1,6 +1,8 @@
 #to be removed later 
 resources/urdf/nicol/
 
+#keep the example movefile
+resources/data/nico/nico_right_20_new.p
 
 build/*
 *.pyc
