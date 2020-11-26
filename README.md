@@ -13,6 +13,7 @@ Artificial Neural Networks and Machine Learning – ICANN 2020, pages 533-545 - 
 https://www2.informatik.uni-hamburg.de/wtm/publications/2020/KSSW20/ICANN_2020__Neuro_Genetic_Visuomotor_Framework_Preprint.pdf
 
 # History
+![Nico using ik](nico_ik.gif "NICO ik")
 
 # Installation
 
