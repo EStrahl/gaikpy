@@ -12,7 +12,11 @@ Artificial Neural Networks and Machine Learning – ICANN 2020, pages 533-545 - 
 
 https://www2.informatik.uni-hamburg.de/wtm/publications/2020/KSSW20/ICANN_2020__Neuro_Genetic_Visuomotor_Framework_Preprint.pdf
 
-# History
+# History and credits
+
+The Neuro Inspired COmpanion ( or [NICO](https://www.inf.uni-hamburg.de/en/inst/ab/wtm/research/neurobotics/nico.html) ) is the robot we developed at the [Knowledge Technology group](https://www.inf.uni-hamburg.de/en/inst/ab/wtm/about.html) at the [University of Hamburg](https://www.uni-hamburg.de/en.html) to fullfill our [reasearch needs](https://www2.informatik.uni-hamburg.de/wtm/publications/2017/KSMNHW17/NICO_RO-MAN_2017-PREPRINT-2017.pdf). Our philosophy is to have a full python based interface for the NICO ( besides our ROS based interface ), so we searched for a python based ik library. We found [ikpy](https://github.com/Phylliade/ikpy), which is a great software, but was at least at time we started not able to solve the full-pose ik ( but only the position ) for our NICO robot. So we started with the genetic ik approach one of our [former students developed](https://ieeexplore.ieee.org/document/7866587), but unfortunately not in python, but in c#.
+
+
 ![Nico using ik](nico_opt.gif "NICO ik")
 
 # Installation
