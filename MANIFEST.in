@@ -1,0 +1,8 @@
+recursive-include resources/data/nico/ *.p
+recursive-include resources/urdf/nico/ *
+
+include *.jpg
+include *.gif
+include *.md
+
+
