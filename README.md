@@ -1,6 +1,6 @@
 # Introduction
 
-![Nico using ik](nico_ik.jpg "NICO ik")
+![Nico using ik](https://github.com/knowledgetechnologyuhh/gaikpy/blob/main/nico_ik.jpg?raw=true "NICO ik")
 
 gaikpy is a pure python approach to solve the inverse kinematics for every URDF modelled robot.
 
@@ -16,14 +16,14 @@ https://www2.informatik.uni-hamburg.de/wtm/publications/2020/KSSW20/ICANN_2020__
 
 # History and credits
 
-The Neuro Inspired COmpanion ( or [NICO](https://www.inf.uni-hamburg.de/en/inst/ab/wtm/research/neurobotics/nico.html) ) is the robot we developed at the [Knowledge Technology group](https://www.inf.uni-hamburg.de/en/inst/ab/wtm/about.html) at the [University of Hamburg](https://www.uni-hamburg.de/en.html) to fullfill our [reasearch needs](https://www2.informatik.uni-hamburg.de/wtm/publications/2017/KSMNHW17/NICO_RO-MAN_2017-PREPRINT-2017.pdf). 
+The Neuro Inspired COmpanion ( or [NICO](https://www.inf.uni-hamburg.de/en/inst/ab/wtm/research/neurobotics/nico.html) ) is the robot we developed at the [Knowledge Technology group](https://www.inf.uni-hamburg.de/en/inst/ab/wtm/about.html) at the [University of Hamburg](https://www.uni-hamburg.de/en.html) to fullfill our [research needs](https://www2.informatik.uni-hamburg.de/wtm/publications/2017/KSMNHW17/NICO_RO-MAN_2017-PREPRINT-2017.pdf). 
 
 Our philosophy is to have a full python based interface for the NICO ( besides our ROS based interface ), so we searched first for an existing python based ik library. We found [ikpy](https://github.com/Phylliade/ikpy), which is a great software, but was at least at time we started not able to solve the full-pose ik ( but only the position ) for our NICO robot. 
 
 As we favour the idea of bioinspired algoritms in our group and one of our former students has [developed a genetic based ik approach in C#](https://ieeexplore.ieee.org/document/7866587), we took parts of this concept and adapted this to our python approach, which you see here with gaikpy.
 
 
-![Nico using ik](nico_opt.gif "NICO ik")
+![Nico using ik](https://github.com/knowledgetechnologyuhh/gaikpy/blob/main/nico_opt.gif?raw=true "NICO ik")
 
 # Installation
 
@@ -34,6 +34,12 @@ As we favour the idea of bioinspired algoritms in our group and one of our forme
 + Install - "python setup.py develop" or "python setup.py install"
 + Run the test - "python setup.py test"
 You should have no errors ( warnings are fine, the included libraries might throw some)
+
+# Build the docs
+
++ cd gaikpy/docs
++ make html
++ browse at gaikpy/docs/build/html
 
 # Usage
 
