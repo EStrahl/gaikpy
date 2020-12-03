@@ -1,15 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import gaikpy
 from gaikpy import chain
 from gaikpy import robot
 from gaikpy import chain_definitions
 import time
 import pickle
+import os
 
-
+#package_path = gaikpy.__path__.__dict__["_path"][0]
 
 nico_path = "./resources/urdf/nico/complete_modified_bounds.urdf"
+
 
 rightchain = chain.Chain.from_urdf_file(nico_path , base_elements=["torso:11", "r_shoulder_z", "right_shoulder:11", 
                                         "r_shoulder_y", "right_collarbone:11", "r_arm_x", "right_upper_arm:11", "r_elbow_y", 
@@ -52,6 +55,7 @@ with open('./resources/data/nico/nico_right_20_new.p', 'rb') as f:
 
 #input()
 
+#input()
 for sample in sample_set:
 
     (joi,sfwr)=sample
@@ -66,7 +70,7 @@ for sample in sample_set:
 
     ik_kor = rightchain.inverse_kinematics(sfwr, method="ga_simple",include_orientation=True,
                         numGenerations=1000,max_iter=100000,dist_acc=0.01,or_acc=0.1,
-                        multiproc=False,orientation_weight=-1)
+                        multiproc=True,orientation_weight=-1)
     
     #from IPython.core.debugger import set_trace
     #set_trace()
@@ -76,4 +80,5 @@ for sample in sample_set:
     print ("gaikpy result: \n" + str(ik_kor))
     nico.update_robot_pose(joi)
     
-    time.sleep(1)
+    
+    time.sleep(0.3)
