@@ -8,7 +8,7 @@ with open(path.join(this_directory, 'README.md')) as f:
 
 setup(
     name='gaikpy',
-    version='0.3.4.8.3',
+    version='0.3.4.0',
     author='Erik Strahl',
     author_email='strahl@informatik.uni-hamburg.de',
     description='Calculates and visualises forward and (full-pose) inverse kinematic realised with a genetic algorithm (ga) for URDF models',
@@ -61,5 +61,7 @@ setup(
     
     tests_require=(
         'pytest-cov',
-    )
+    ),
+
+    scripts=['demo.py']
 )

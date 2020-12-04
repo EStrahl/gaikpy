@@ -9,9 +9,9 @@ import time
 import pickle
 import os
 
-#package_path = gaikpy.__path__.__dict__["_path"][0]
 
-nico_path = "./resources/urdf/nico/complete_modified_bounds.urdf"
+#nico_path = "./resources/urdf/nico/complete_modified_bounds.urdf"
+nico_path = gaikpy.get_nico_urdf_path()+"/complete_modified_bounds.urdf"
 
 
 rightchain = chain.Chain.from_urdf_file(nico_path , base_elements=["torso:11", "r_shoulder_z", "right_shoulder:11", 
@@ -50,7 +50,7 @@ logger.info("--- Left: " + str(leftchain.get_all_active_joint_names()))
 fk = nico.r_model.link_fk()
 logger.info("Forward kinematics robot"+str(fk[nico.r_model.links[1]]))
 
-with open('./resources/data/nico/nico_right_20_new.p', 'rb') as f:
+with open(gaikpy.get_nico_data_path()+'/nico_right_20_new.p', 'rb') as f:
             sample_set = pickle.load(f)
 
 #input()
