@@ -30,12 +30,16 @@ As we favour the idea of bioinspired algoritms in our group and one of our forme
 ## From the pypi repository
 
 + create a python environment
+
     python3 -m venv env
 + activate the environement
+
     source ./env/bin/activate
 + get gaikpy and the depening packages
+
     pip install gaikpy
 + run the demo
+
     demo.py
 
 ## Using the souce code from github
