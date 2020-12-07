@@ -41,21 +41,29 @@ As we favour the idea of bioinspired algoritms in our group and one of our forme
 ## Using the souce code from github
 
 + Clone the repository with git clone
+
     git clone https://github.com/knowledgetechnologyuhh/gaikpy.git
 + Change to the directory
+
     cd gaikpy
 + Create a python environment
+
     python3 -m venv env
 + Activate your environment 
+
     source ./env/bin/activate
 + Install
+
     python setup.py develop 
 or 
+
     python setup.py install
 + Run the test
+
     python setup.py test
 You should have no errors ( warnings are fine, the included libraries might throw some)
 + Run the demo
+
     python demo.py
 
 
@@ -76,6 +84,7 @@ The demo.py program uses the NICO model and calculates the ik for some test valu
 Take a look at demo.py and adapt it to you usecase or robot:
 
 Start with your imports
+
     #!/usr/bin/env python
     # -*- coding: utf-8 -*-
 
@@ -112,6 +121,7 @@ taking part in he movement. Below is a definiion o the right NICO arm
 
 For visualization we built he a full robot model
 again using the URDF
+
     nico_right_chain=chain_definitions.nico_right_chain_active
     nico=robot.robot(nico_path,nico_right_chain)
 
@@ -160,8 +170,8 @@ Update the pose on the visualised NICO
 
 # Use other robots
 
-Using other robots is very easy, if you have a URDF model of the robot at hand. Just take the URDF model and list the joints and links of your active chain until the end effector. Just adapt the NICO example ./examples/visualise_NICO.py o see how it works.
-We will integrate other robots by efault in the future. 
+Using other robots is very easy, if you have a URDF model of the robot at hand. Just take the URDF model and list the joints and links of your active chain until the end effector. Just adapt the demo.py or the NICO example ./examples/visualise_NICO.py to see how it works.
+We will integrate other robots by default in the future. 
 
 # License
 
