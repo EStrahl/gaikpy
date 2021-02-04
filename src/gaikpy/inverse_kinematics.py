@@ -25,9 +25,6 @@ module=sys.modules[__name__]
 logger.info("Logging started on  " + str(module))
 
 
-module=sys.modules[__name__]
-logger.info("Logging started on  " + str(module))
-
 import scipy.optimize
 import numpy as np
 
@@ -457,12 +454,13 @@ def inverse_kinematic_ga(chain, target_frame, starting_nodes_angles, multiproc_c
         
         if dist_acc != None:
             min_distance = math.sqrt(np.linalg.norm(fwk[:3, -1] - target_position))
-
+            logger.info ("dist acc: " + str(min_distance))
         if or_acc != None:
             
             #min_or_distance = utils.angle_diff(fwk,target_frame)
             min_or_distance = utils.angle_diff_tait(fwk,target_frame)
-            logger.debug (" fwk:   " + str(fwk) + " or_dist" + str(min_or_distance) )
+            logger.debug ("fwk:   " + str(fwk) )
+            logger.info ("dist or " + str(min_or_distance) )
 
         if dist_acc==None and or_acc==None:
             acc_reached=False
@@ -471,7 +469,7 @@ def inverse_kinematic_ga(chain, target_frame, starting_nodes_angles, multiproc_c
         elif or_acc==None:
             acc_reached = min_distance < dist_acc
         else:
-            logger.debug ("dist acc:" + str(min_distance))
+            
             acc_reached = min_distance < dist_acc and min_or_distance < or_acc
         return (acc_reached)
 
@@ -489,31 +487,31 @@ def inverse_kinematic_ga(chain, target_frame, starting_nodes_angles, multiproc_c
         logger.debug (" local opt out: " + str(chain.active_from_full(optimised_joint_values)))
         return(chain.active_from_full(optimised_joint_values))
                         
-
     if include_orientation:
         #Default taken from hyperopt runs
         #See Paper Kerzel et. al., Neuro-Genetic Visuomotor Architecture for Robotic Grasping
-        popSize = kwargs.get('popSize', 8)
-        mutRate = kwargs.get('mutRate', 0.36)
+        pop_size = kwargs.get('pop_size', 8)
+        mut_rate = kwargs.get('mut_rate', 0.36)
         
-        numElites = kwargs.get('numElites', 3)
+        num_elites = kwargs.get('num_elites', 3)
 
         #reachFitness = kwargs.get('reachFitness',0.0001)
         max_iter = kwargs.get('max_iter', 500)
+        
         dist_acc = kwargs.get('dist_acc', .001)
         or_acc = kwargs.get('or_acc', .01)
 
         if dist_acc is not None or or_acc is not None:
-            numGenerations = kwargs.get('numGenerations', 10000)
+            num_generations = kwargs.get('num_generations', 10000)
         else:
-            numGenerations = kwargs.get('numGenerations', 20)
+            num_generations = kwargs.get('num_generations', 20)
     else:
         #Default taken from hyperopt runs
         #See Paper Kerzel et. al., Neuro-Genetic Visuomotor Architecture for Robotic Grasping
-        popSize = kwargs.get('popSize', 8)
-        mutRate = kwargs.get('mutRate', 0.36)
-        numGenerations = kwargs.get('numGenerations', 20)
-        numElites = kwargs.get('numElites', 3)
+        pop_size = kwargs.get('pop_size', 8)
+        mut_rate = kwargs.get('mut_rate', 0.36)
+        num_generations = kwargs.get('num_generations', 20)
+        num_elites = kwargs.get('num_elites', 3)
 
         #reachFitness = kwargs.get('reachFitness',0.0001)
         max_iter = kwargs.get('max_iter', 50)
@@ -530,7 +528,9 @@ def inverse_kinematic_ga(chain, target_frame, starting_nodes_angles, multiproc_c
         if t.bounds != (None, None):
             bound_arr.append(t.bounds)
 
-    gaw = ga_world(chrom_length,bound_arr,eval_func=eval_func,local_optimiser=local_optimiser,accuracy_reached=accuracy_reached)
+    gaw = ga_world(chrom_length,bound_arr,pop_size=pop_size,num_elites=num_elites,num_generations=num_generations,
+                   mut_rate=mut_rate, eval_func=eval_func,local_optimiser=local_optimiser,
+                   accuracy_reached=accuracy_reached)
     fitness,joi = gaw.run()
     joi = chain.active_to_full(joi)
     return(fitness,joi) 

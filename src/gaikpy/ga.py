@@ -282,6 +282,8 @@ class ga_world(object):
         min_orientation_distance = 10
         acc_reached = False
 
+        print ("num_generations " +str(self.num_generations))
+
         # while i < numGenerations and minFitness > reachFitness:  # iterate through the generations
         while i < self.num_generations and not acc_reached:  # iterate through the generations
             #        if lastFitness-minFitness<0.01:
@@ -291,8 +293,9 @@ class ga_world(object):
             #			nic=0
 
             i += 1
-            logger.debug("(Gen: #%s) Total error: %s\n" % (i, np.sum([ind.fitness for ind in pop.individuals])))
-            logger.debug("Min Error: " + str(pop.individuals[0].fitness))
+            logger.info("New Generation: Gen: #%s Total error: %s\n" % (i, np.sum([ind.fitness for ind in pop.individuals])))
+            logger.info("Min Error: " + str(pop.individuals[0].fitness))
+            #logger.debug("Generation: " + str(i))
             new_pop = self.Population()
             # winners = np.zeros((params[4], params[3])) #20x2
             # clear population from individuals with the same fitness
@@ -303,7 +306,7 @@ class ga_world(object):
 
                 if np.allclose(pop.individuals[t-1].fitness, pop.individuals[t].fitness, rtol=1e-03, atol=1e-04):
                     pop.individuals[t].gene = self.init_gene(self.chrom_length,bounds=self.bounds)
-                    logger.debug ("cleared an individual cause too equal")
+                    logger.debug ("Cleared: Cleared an individual cause too equal")
                     
                 t += 1
 

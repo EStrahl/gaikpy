@@ -42,7 +42,7 @@ with open(gaikpy.get_nico_data_path()+'/nico_right_20_new.p', 'rb') as f:
 # Go through all the samples in file
 # The contains pairs of poses in Eukledian and in the joint space 
 # Of cours we use only the Eukledian ones
-for sample in sample_set:
+for idx,sample in enumerate(sample_set):
 
     # joi is the data in joint space for the robot (not used)
     # sfwr is the pose in Euklidan space
@@ -53,9 +53,10 @@ for sample in sample_set:
     nico.update_target(sfwr)
 
     # Calculate the IK, get the robots joint values
+    # ga can be tuned with parameters pop_size,num_elites,num_generations,mut_rate
     ik_kor = rightchain.inverse_kinematics(sfwr, method="ga_simple",include_orientation=True,
-                        numGenerations=1000,max_iter=100000,dist_acc=0.01,or_acc=0.1,
-                        multiproc=True,orientation_weight=-1)
+                        num_generations=100,max_iter=10000,dist_acc=0.001,or_acc=0.8,
+                        multiproc=True,orientation_weight=-1,mut_rate=0.36)
     
     # Change the joint data to the full joint representation
     joi=rightchain.active_from_full(ik_kor)
@@ -64,7 +65,8 @@ for sample in sample_set:
     fwr=rightchain.forward_kinematics(ik_kor,full_kinematics=False)
 
     #Let us compare the results
-    print ("gaikpy result: \n" + str(fwr))
+    #print ("gaikpy result: \n" + str(fwr))
+
     
     # And update the pose on the visualised NICO
     nico.update_robot_pose(joi)

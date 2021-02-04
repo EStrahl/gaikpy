@@ -29,6 +29,8 @@ root_logger.addHandler(console_handler)
 root_logger.setLevel(logging.INFO)
 logger=root_logger
 
+logger.setLevel(logging.INFO)
+
 
 class Chain(chain.Chain):
     """The base Chain class, based on ikpy ( https://github.com/Phylliade/ikpy ) chain
